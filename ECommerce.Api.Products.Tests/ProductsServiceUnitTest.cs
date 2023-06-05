@@ -1,5 +1,6 @@
 using AutoMapper;
 using ECommerce.Api.Products.Db;
+using ECommerce.Api.Products.Models;
 using ECommerce.Api.Products.Profiles;
 using ECommerce.Api.Products.Providers;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +55,42 @@ namespace ECommerce.Api.Products.Tests
                 dbContext.Products.Add(new Product {  Id = i, Name = Guid.NewGuid().ToString(), Inventory = i + 10, Price = (decimal)(i * 3.41)});
                 dbContext.SaveChanges();
             }
+        }
+
+        [Fact]
+        public async Task PostProductReturnsProduct()
+        {
+            var options = new DbContextOptionsBuilder<ProductsDbContext>().UseInMemoryDatabase(nameof(PostProductReturnsProduct)).Options;
+            var dbContext = new ProductsDbContext(options);
+
+            var productProfile = new ProductProfile();
+            var configuration = new MapperConfiguration(cfg => cfg.AddProfile(productProfile));
+            var mapper = new Mapper(configuration);
+            var productsProvider = new ProductsProvider(dbContext, null, mapper);
+
+            var result = await productsProvider.PostProductAsync(new ProductModel { Id=0, Inventory = 5, Name = "Headset", Price = 200});
+            Assert.True(result.IsSuccess);
+            Assert.NotNull(result.Product);
+            Assert.True(result.Product.Id != 0);
+            Assert.Null(result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task DeleteProductReturnsProduct()
+        {
+            var options = new DbContextOptionsBuilder<ProductsDbContext>().UseInMemoryDatabase(nameof(DeleteProductReturnsProduct)).Options;
+            var dbContext = new ProductsDbContext(options);
+
+            var productProfile = new ProductProfile();
+            var configuration = new MapperConfiguration(cfg => cfg.AddProfile(productProfile));
+            var mapper = new Mapper(configuration);
+            var productsProvider = new ProductsProvider(dbContext, null, mapper);
+
+            var result = await productsProvider.DeleteProductAsync(1);
+            Assert.True(result.IsSuccess);
+            Assert.NotNull(result.Product);
+            Assert.True(result.Product.Id == 1);
+            Assert.Null(result.ErrorMessage);
         }
     }
 }
