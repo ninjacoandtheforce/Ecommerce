@@ -1,4 +1,5 @@
 ﻿using ECommerce.Api.Products.Interfaces;
+using ECommerce.Api.Products.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,6 +37,28 @@ namespace ECommerce.Api.Products.Controllers
                 return Ok(result.Product);
             }
             return NotFound();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteProductAsync(int id)
+        {
+            var result = await _productsProvider.DeleteProductAsync(id);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Product);
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostProductAsync(ProductModel product)
+        {
+            var result = await _productsProvider.PostProductAsync(product);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Product);
+            }
+            return BadRequest(result.ErrorMessage);
         }
     }
 }

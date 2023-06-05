@@ -60,10 +60,56 @@ namespace ECommerce.Api.Products.Providers
                 var product = await _productsDbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
                 if (product != null)
                 {
+                    _productsDbContext.Products.Remove(product);
+                    await _productsDbContext.SaveChangesAsync();
                     var result = _mapper.Map<Product, ProductModel>(product);
                     return (true, result, null);
                 }
                 return (false, null, "Not Found");
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+                return (false, null, e.Message);
+            }
+        }
+
+        public async Task<(bool IsSuccess, ProductModel Product, string ErrorMessage)> DeleteProductAsync(int id)
+        {
+            try
+            {
+                var product = await _productsDbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
+                if (product != null)
+                {
+                    
+                    
+                    var result = _mapper.Map<Product, ProductModel>(product);
+                    return (true, result, null);
+                }
+                return (false, null, "Not Found");
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+                return (false, null, e.Message);
+            }
+        }
+
+        public async Task<(bool IsSuccess, ProductModel Product, string ErrorMessage)> PostProductAsync(ProductModel product)
+        {
+            try
+            {
+                var productEntity = _mapper.Map<ProductModel, Product>(product);
+                var productModel = await _productsDbContext.Products.AddAsync(productEntity);
+                await _productsDbContext.SaveChangesAsync();
+                if (productModel.Entity != null)
+                {
+                    var result = _mapper.Map<Product, ProductModel>(productModel.Entity);
+                    return (true, result, null);
+                }
+
+                return (false, null, "Entity was not able to attach item");
             }
             catch (Exception e)
             {

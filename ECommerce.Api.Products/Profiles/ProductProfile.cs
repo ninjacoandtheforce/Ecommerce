@@ -8,6 +8,7 @@ namespace ECommerce.Api.Products.Profiles
         public ProductProfile()
         {
             CreateMap<Product, ProductModel>();
+            CreateMap<ProductModel, Product>();
         }
     }
 }

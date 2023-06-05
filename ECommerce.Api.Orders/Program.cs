@@ -1,5 +1,6 @@
 using ECommerce.Api.Orders.Db;
 using ECommerce.Api.Orders.Interfaces;
+using ECommerce.Api.Orders.Profiles;
 using ECommerce.Api.Orders.Providers;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<IOrdersProvider, OrdersProvider>();
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(typeof(OrderProfile));
 builder.Services.AddDbContext<OrdersDbContext>(options =>
 {
     options.UseInMemoryDatabase("Orders");
